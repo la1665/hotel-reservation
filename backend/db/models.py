@@ -34,13 +34,16 @@ class DBUser(Base):
     id = Column(Integer, primary_key=True, autoincrement=True, index=True)
     first_name = Column(String(250), nullable=False)
     last_name = Column(String(250), nullable=False)
-    username = Column(String(250), nullable=False)
+    username = Column(String(250), nullable=False, unique=True)
+    hashed_password = Column(String, nullable=False)
     email_address = Column(String(250), nullable=False, unique=True)
     created_at = Column(DateTime, nullable=False, default=func.now())
     updated_at = Column(
         DateTime, nullable=False, default=func.now(), onupdate=func.now()
     )
     customer = relationship("DBCustomer", uselist=False, back_populates="user")
+    user_type = Column(sqlalchemyEnum(UserType), default=UserType.USER, nullable=False)
+    is_active = Column(Boolean, nullable=False, default=True)
 
 
 class DBCustomer(Base):
@@ -51,7 +54,6 @@ class DBCustomer(Base):
     customer_type = Column(
         sqlalchemyEnum(CustomerType), default=CustomerType.BASIC, nullable=False
     )
-    active = Column(Boolean, default=True, nullable=False)
 
 
 class DBHotel(Base):

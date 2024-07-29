@@ -6,7 +6,6 @@ from backend.db.models import CustomerType
 
 class CustomerBase(BaseModel):
     customer_type: CustomerType = Field(default=CustomerType.BASIC)
-    active: bool = Field(default=True)
 
 
 class CustomerCreate(CustomerBase):

@@ -30,9 +30,6 @@ class CustomerOperation:
             if customer is None:
                 raise HTTPException(status.HTTP_404_NOT_FOUND, "customer not found.")
 
-            if not customer.active:
-                raise HTTPException(status.HTTP_400_BAD_REQUEST, "bad request.")
-
         return customer
 
     async def create_customer(self, customer: CustomerCreate):
@@ -41,7 +38,6 @@ class CustomerOperation:
 
         customer = DBCustomer(
             customer_type=customer.customer_type,
-            active=customer.active,
             user_id=customer.user_id,
         )
 

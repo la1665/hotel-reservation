@@ -1,6 +1,8 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from datetime import datetime
 from typing import Optional
+
+from backend.db.models import UserType
 
 
 class UserBase(BaseModel):
@@ -8,16 +10,19 @@ class UserBase(BaseModel):
     email_address: str
     first_name: str
     last_name: str
+    is_active: bool = Field(default=True)
+    user_type: UserType = Field(default=UserType.USER)
 
 
 class UserCreate(UserBase):
-    pass
+    password: str
 
 
 class UserUpdate(BaseModel):
     email_address: Optional[str] = None
     first_name: Optional[str] = None
     last_name: Optional[str] = None
+    user_type: UserType = Field(default=UserType.USER)
 
 
 class UserInDB(UserBase):
@@ -27,3 +32,11 @@ class UserInDB(UserBase):
 
     class Config:
         orm_mode = True
+
+
+class Token(BaseModel):
+    access_token: str
+    token_type: str
+
+class TokenData(BaseModel):
+    username: str | None = None
