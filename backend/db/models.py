@@ -1,9 +1,14 @@
 from enum import Enum
+from typing import Any
 from sqlalchemy import Column, func, Enum as sqlalchemyEnum
 from sqlalchemy.sql.schema import ForeignKey
-from sqlalchemy.sql.sqltypes import Boolean, Float, Integer, String, Date
+from sqlalchemy.sql.sqltypes import Boolean, Float, Integer, String, DateTime
 
-from db.engine import Base
+from backend.db.engine import Base
+
+
+def to_dict(obj: Base) -> dict[str, Any]:
+    return {c.name: getattr(obj, c.name) for c in obj.__table__.columns}
 
 
 class UserType(Enum):
@@ -28,13 +33,17 @@ class DBUser(Base):
     id = Column(Integer, primary_key=True, autoincrement=True, index=True)
     first_name = Column(String(250), nullable=False)
     last_name = Column(String(250), nullable=False)
+    username = Column(String(250), nullable=False)
     email_address = Column(String(250), nullable=False, unique=True)
-    created_at = Column(Date, nullable=False, default=func.now())
-    updated_at = Column(Date, nullable=False, default=func.now(), onupdate=func.now())
+    created_at = Column(DateTime, nullable=False, default=func.now())
+    updated_at = Column(
+        DateTime, nullable=False, default=func.now(), onupdate=func.now()
+    )
 
 
 class DBCustomer(Base):
     __tablename__ = "customer"
+    id = Column(Integer, primary_key=True, autoincrement=True, index=True)
     user_id = Column(Integer, ForeignKey("user.id"))
     customer_type = Column(
         sqlalchemyEnum(CustomerType), default=CustomerType.BASIC, nullable=False
@@ -67,8 +76,8 @@ class DBRoom(Base):
 class DBReservation(Base):
     __tablename__ = "booking"
     id = Column(Integer, primary_key=True, autoincrement=True)
-    from_date = Column(Date, nullable=False)
-    to_date = Column(Date, nullable=False)
+    from_date = Column(DateTime, nullable=False)
+    to_date = Column(DateTime, nullable=False)
     price = Column(Integer, nullable=False)
     customer_id = Column(Integer, ForeignKey("customer.id"))
     room_id = Column(Integer, ForeignKey("room.id"))

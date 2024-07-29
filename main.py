@@ -2,20 +2,21 @@ import os
 from fastapi import FastAPI, status
 from dotenv import load_dotenv
 
-from db.engine import db_init
+from backend.db.engine import engine, Base
+from backend.router import user
 
 app = FastAPI()
-# Load environment variables from .env file
-load_dotenv()
-# Get database URL from environment variables
-DATABASE_URL = os.getenv("DATABASE_URL")
 
 
 @app.on_event("startup")
-async def startup():
-    await db_init(DATABASE_URL)
+async def init_tables():
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
 
 
 @app.get("/")
 async def root_path() -> dict:
     return {"massage": "hello world!", "status": status.HTTP_200_OK}
+
+
+app.include_router(user.router)
