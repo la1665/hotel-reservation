@@ -6,6 +6,13 @@ from backend.db.models import DBUser
 from backend.schema.user import UserBase, UserCreate, UserUpdate
 
 
+async def check_user(user_id: int, db_session: AsyncSession):
+    result = await db_session.scalar(
+        sqlalchemy.select(DBUser).filter(DBUser.id == user_id)
+    )
+    return result is not None
+
+
 class UserOperation:
     def __init__(self, db_session: AsyncSession) -> None:
         self.db_session = db_session
@@ -58,7 +65,6 @@ class UserOperation:
             await session.refresh(user)
 
         return user
-
 
     async def delete_user(self, id: int):
         query = sqlalchemy.select(DBUser).where(DBUser.id == id)

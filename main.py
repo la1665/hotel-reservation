@@ -3,7 +3,7 @@ from fastapi import FastAPI, status
 from dotenv import load_dotenv
 
 from backend.db.engine import engine, Base
-from backend.router import user
+from backend.router import user, customer
 
 app = FastAPI()
 
@@ -20,3 +20,4 @@ async def root_path() -> dict:
 
 
 app.include_router(user.router)
+app.include_router(customer.router)

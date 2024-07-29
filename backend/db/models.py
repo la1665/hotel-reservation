@@ -3,6 +3,7 @@ from typing import Any
 from sqlalchemy import Column, func, Enum as sqlalchemyEnum
 from sqlalchemy.sql.schema import ForeignKey
 from sqlalchemy.sql.sqltypes import Boolean, Float, Integer, String, DateTime
+from sqlalchemy.orm import relationship
 
 from backend.db.engine import Base
 
@@ -39,12 +40,14 @@ class DBUser(Base):
     updated_at = Column(
         DateTime, nullable=False, default=func.now(), onupdate=func.now()
     )
+    customer = relationship("DBCustomer", uselist=False, back_populates="user")
 
 
 class DBCustomer(Base):
     __tablename__ = "customer"
     id = Column(Integer, primary_key=True, autoincrement=True, index=True)
-    user_id = Column(Integer, ForeignKey("user.id"))
+    user_id = Column(Integer, ForeignKey("user.id"), unique=True, nullable=False)
+    user = relationship("DBUser", back_populates="customer")
     customer_type = Column(
         sqlalchemyEnum(CustomerType), default=CustomerType.BASIC, nullable=False
     )
