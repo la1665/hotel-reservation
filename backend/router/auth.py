@@ -8,8 +8,11 @@ from backend.db.engine import get_db
 
 router = APIRouter()
 
+
 @router.post("/token", response_model=Token)
-async def login_for_access_token(db: AsyncSession = Depends(get_db), form_data: OAuth2PasswordRequestForm = Depends()):
+async def login_for_access_token(
+    db: AsyncSession = Depends(get_db), form_data: OAuth2PasswordRequestForm = Depends()
+):
     user = await auth.get_user(db, form_data.username)
     if not user or not auth.verify_password(form_data.password, user.hashed_password):
         raise HTTPException(

@@ -6,6 +6,7 @@ from backend.db.models import DBUser
 from backend.schema.user import UserBase, UserCreate, UserUpdate
 from backend.auth import auth
 
+
 async def check_user(user_id: int, db_session: AsyncSession):
     result = await db_session.scalar(
         sqlalchemy.select(DBUser).filter(DBUser.id == user_id)
@@ -46,7 +47,7 @@ class UserOperation:
             username=user.username,
             is_active=user.is_active,
             user_type=user.user_type,
-            hashed_password=hashed_password
+            hashed_password=hashed_password,
         )
 
         async with self.db_session as session:
