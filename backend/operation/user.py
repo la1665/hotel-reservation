@@ -4,7 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from backend.db.models import DBUser
 from backend.schema.user import UserBase, UserCreate, UserUpdate
-from backend.auth import auth
+from backend.authentication import auth
 
 
 async def check_user(user_id: int, db_session: AsyncSession):
