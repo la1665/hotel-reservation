@@ -8,6 +8,7 @@ from backend.authentication.auth import oauth2_scheme, get_user
 from backend.schema.auth import TokenData
 from backend.schema.user import UserInDB
 
+
 async def get_current_user(
     db: AsyncSession = Depends(get_db), token: str = Depends(oauth2_scheme)
 ):
@@ -18,7 +19,7 @@ async def get_current_user(
     )
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        username: str = payload.get("sub")
+        username = payload.get("sub")
         if username is None:
             raise credentials_exception
         token_data = TokenData(username=username)

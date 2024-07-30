@@ -9,7 +9,7 @@ class CustomerBase(BaseModel):
 
 
 class CustomerCreate(CustomerBase):
-    user_id: int
+    user_id: int = Field(exclude=True)
 
 
 class CustomerUpdate(CustomerBase):
