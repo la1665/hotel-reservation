@@ -1,7 +1,11 @@
 import sqlalchemy
 from fastapi import HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.future import select
+from sqlalchemy.orm import joinedload
+from datetime import datetime
 
+from backend.exception_handeler import exceptions
 from backend.db.models import DBUser
 from backend.schema.user import UserBase, UserCreate, UserUpdate
 from backend.authentication import auth
@@ -23,12 +27,10 @@ class UserOperation:
 
         async with self.db_session as session:
             user = await session.scalar(query)
-        if user is None:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND, detail="User not found."
-            )
+            if user is None:
+                raise exceptions.NotFoundException("User")
 
-        return user
+            return user
 
     async def get_all_users(self):
         query = sqlalchemy.select(DBUser)
@@ -36,7 +38,7 @@ class UserOperation:
         async with self.db_session as session:
             users = await session.scalars(query)
 
-        return [user for user in users]
+            return [user for user in users]
 
     async def create_user(self, user: UserCreate):
         hashed_password = auth.get_password_hash(user.password)
@@ -63,13 +65,16 @@ class UserOperation:
         async with self.db_session as session:
             user = await session.scalar(query)
             if user is None:
-                raise HTTPException(status.HTTP_404_NOT_FOUND, "user not found.")
+                raise exceptions.NotFoundException("User")
             for key, value in data.items():
                 setattr(user, key, value)
+            user.updated_at = (
+                datetime.utcnow()
+            )  # Update the timestamp for the last update
             await session.commit()
             await session.refresh(user)
 
-        return user
+            return user
 
     async def delete_user(self, user_id: int):
         query = sqlalchemy.select(DBUser).where(DBUser.id == user_id)
@@ -77,8 +82,8 @@ class UserOperation:
         async with self.db_session as session:
             user = await session.scalar(query)
             if user is None:
-                raise HTTPException(status.HTTP_404_NOT_FOUND, "user not found.")
+                raise exceptions.NotFoundException("User")
             await session.delete(user)
             await session.commit()
 
-        return user
+            return user

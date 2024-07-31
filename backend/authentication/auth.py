@@ -1,4 +1,3 @@
-from fastapi import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from passlib.context import CryptContext
@@ -6,11 +5,9 @@ from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
 from datetime import datetime, timedelta
 
-from backend.db.engine import get_db
-from settings import SECRET_KEY, ALGORITHM, ACCESS_TOKEN_EXPIRE_MINUTES
+
+from settings import SECRET_KEY, ALGORITHM
 from backend.db.models import DBUser
-from backend.schema.user import UserInDB
-from backend.schema.auth import TokenData
 
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")

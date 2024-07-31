@@ -24,6 +24,9 @@ class UserUpdate(BaseModel):
     last_name: Optional[str] = None
     user_type: UserType = Field(default=UserType.USER)
 
+    class Config:
+        orm_mode = True
+
 
 class UserInDB(UserBase):
     id: int

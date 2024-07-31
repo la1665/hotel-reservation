@@ -1,5 +1,4 @@
 from pydantic import BaseModel, Field
-from sqlalchemy.sql.type_api import _BaseTypeMemoDict
 
 from backend.db.models import CustomerType
 
@@ -22,7 +21,3 @@ class CustomerInDB(CustomerBase):
 
     class Config:
         orm_mode = True
-
-
-class CustomerOutput(CustomerInDB):
-    user: str

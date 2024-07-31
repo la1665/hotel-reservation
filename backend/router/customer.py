@@ -1,7 +1,6 @@
 from fastapi import APIRouter, status, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 
-# from starlette.exceptions import HTTPException
 
 from backend.authentication.authorization import get_current_active_user, is_admin_user
 from backend.db.engine import get_db
@@ -9,7 +8,6 @@ from backend.operation.customer import CustomerOperation
 from backend.schema.customer import (
     CustomerCreate,
     CustomerInDB,
-    CustomerOutput,
     CustomerUpdate,
 )
 from backend.schema.user import UserInDB

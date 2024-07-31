@@ -1,6 +1,7 @@
 from fastapi import APIRouter, HTTPException, status, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from backend.exception_handeler import exceptions
 from backend.authentication.auth import get_user
 from backend.authentication.authorization import (
     get_current_user,
@@ -18,7 +19,7 @@ router = APIRouter()
 async def api_create_user(user: UserCreate, db: AsyncSession = Depends(get_db)):
     db_user = await get_user(db=db, username=user.username)
     if db_user:
-        raise HTTPException(status.HTTP_400_BAD_REQUEST, "Username already exists.")
+        raise exceptions.NotAllowedException("User error", "Username already exists.")
     return await UserOperation(db).create_user(user)
 
 
@@ -47,7 +48,7 @@ async def api_read_user(
     current_user: UserInDB = Depends(get_current_active_user),
 ):
     if user_id != current_user.id and current_user.user_type.value != "admin":
-        raise HTTPException(status.HTTP_400_BAD_REQUEST, "not allowed!")
+        raise exceptions.NotAllowedException("Authorization Error", "Not Allowed!")
     user = await UserOperation(db).get_user(user_id)
     return user
 
@@ -60,8 +61,9 @@ async def api_update_user(
     current_user: UserInDB = Depends(get_current_active_user),
 ):
     if user_id != current_user.id:
-        raise HTTPException(status.HTTP_400_BAD_REQUEST, "not allowed!")
-    user = await UserOperation(db).update_user(user_id, data.dict())
+        raise exceptions.NotAllowedException("Authorization Error", "Not Allowed!")
+    update_data = data.dict(exclude_unset=True)
+    user = await UserOperation(db).update_user(user_id, update_data)
     return user
 
 
@@ -72,6 +74,6 @@ async def api_delete_user(
     current_user: UserInDB = Depends(get_current_user),
 ):
     if user_id != current_user.id and current_user.user_type.value != "admin":
-        raise HTTPException(status.HTTP_400_BAD_REQUEST, "not allowed!")
+        raise exceptions.NotAllowedException("Authorization Error", "Not Allowed!")
     user = await UserOperation(db).delete_user(user_id)
     return user

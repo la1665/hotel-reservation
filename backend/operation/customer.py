@@ -3,7 +3,8 @@ from sqlalchemy.future import select
 from fastapi import HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from backend.db.models import DBCustomer
+from backend.exception_handeler import exceptions
+from backend.db.models import DBCustomer, DBUser
 from backend.operation.user import check_user
 from backend.schema.customer import CustomerCreate, CustomerUpdate
 
@@ -21,30 +22,22 @@ class CustomerOperation:
         return [customer for customer in customers]
 
     async def get_customer_by_user_id(self, user_id: int):
-        # if not await check_user(user_id, self.db_session):
-        #     raise HTTPException(status.HTTP_404_NOT_FOUND, "user not found.")
-
         query = sqlalchemy.select(DBCustomer).filter(DBCustomer.user_id == user_id)
 
         async with self.db_session as session:
             customer = await session.scalar(query)
             if customer is None:
-                raise HTTPException(status.HTTP_404_NOT_FOUND, "customer not found.")
+                raise exceptions.NotFoundException("Customer")
 
         return customer
 
     async def create_customer(self, customer: CustomerCreate):
-        # if not await check_user(customer.user_id, self.db_session):
-        #     raise HTTPException(status.HTTP_404_NOT_FOUND, "user not found.")
-
         async with self.db_session as session:
             result = await session.execute(
                 select(DBCustomer).filter(DBCustomer.user_id == customer.user_id)
             )
             if result.scalars().first():
-                raise HTTPException(
-                    status.HTTP_400_BAD_REQUEST, "Customer already exists."
-                )
+                raise exceptions.BadRequestExceptions("Customer already exists!")
 
             customer = DBCustomer(
                 customer_type=customer.customer_type,
@@ -61,9 +54,11 @@ class CustomerOperation:
         async with self.db_session as session:
             customer = await session.scalar(query)
             if customer is None:
-                raise HTTPException(status.HTTP_404_NOT_FOUND, "not allowed!")
+                raise exceptions.NotFoundException("Customer")
             if customer.user_id != data.get("user_id"):
-                raise HTTPException(status.HTTP_400_BAD_REQUEST, "not allowed!")
+                raise exceptions.NotAllowedException(
+                    "Authorization Error", "Not Allowed!"
+                )
             for key, value in data.items():
                 setattr(customer, key, value)
             await session.commit()
@@ -76,9 +71,11 @@ class CustomerOperation:
         async with self.db_session as session:
             customer = await session.scalar(query)
             if customer is None:
-                raise HTTPException(status.HTTP_404_NOT_FOUND, "not allowed!")
+                raise exceptions.NotFoundException("Customer")
             if customer.user_id != data.get("user_id"):
-                raise HTTPException(status.HTTP_400_BAD_REQUEST, "not allowed!")
+                raise exceptions.NotAllowedException(
+                    "Authorization Error", "Not Allowed!"
+                )
             await session.delete(customer)
             await session.commit()
 
@@ -89,9 +86,7 @@ class CustomerOperation:
         async with self.db_session as session:
             customer = await session.scalar(query)
             if customer is None:
-                raise HTTPException(status.HTTP_404_NOT_FOUND, "user not found.")
-            # if customer.user_id != data.get("user_id"):
-            #     raise HTTPException(status.HTTP_400_BAD_REQUEST, "not allowed!")
+                raise exceptions.NotFoundException("Customer")
             await session.delete(customer)
             await session.commit()
 
