@@ -2,19 +2,21 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi import Depends, HTTPException, status
 from jose import jwt, JWTError
 
-from settings import SECRET_KEY, ALGORITHM
-from backend.exception_handeler import exceptions
-from backend.db.engine import get_db
-from backend.authentication.auth import oauth2_scheme, get_user
-from backend.schema.auth import TokenData
-from backend.schema.user import UserInDB
+from settings import settings
+from exception_handeler import exceptions
+from db.engine import get_db
+from authentication.auth import oauth2_scheme, get_user
+from schema.auth import TokenData
+from schema.user import UserInDB
 
 
 async def get_current_user(
     db: AsyncSession = Depends(get_db), token: str = Depends(oauth2_scheme)
 ):
     try:
-        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        payload = jwt.decode(
+            token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM]
+        )
         username = payload.get("sub")
         if username is None:
             raise exceptions.UnauthorizedException(

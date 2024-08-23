@@ -2,7 +2,7 @@ from pydantic import BaseModel, Field
 from datetime import datetime
 from typing import Optional
 
-from backend.db.models import UserType
+from db.models import UserType
 
 
 class UserBase(BaseModel):

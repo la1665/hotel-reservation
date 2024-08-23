@@ -5,10 +5,10 @@ from sqlalchemy.future import select
 from sqlalchemy.orm import joinedload
 from datetime import datetime
 
-from backend.exception_handeler import exceptions
-from backend.db.models import DBUser
-from backend.schema.user import UserBase, UserCreate, UserUpdate
-from backend.authentication import auth
+from exception_handeler import exceptions
+from db.models import DBUser
+from schema.user import UserBase, UserCreate, UserUpdate
+from authentication import auth
 
 
 async def check_user(user_id: int, db_session: AsyncSession):

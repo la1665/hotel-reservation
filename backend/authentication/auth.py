@@ -6,8 +6,8 @@ from jose import JWTError, jwt
 from datetime import datetime, timedelta
 
 
-from settings import SECRET_KEY, ALGORITHM
-from backend.db.models import DBUser
+from settings import settings
+from db.models import DBUser
 
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
@@ -34,5 +34,7 @@ def create_access_token(data: dict, expires_delta: timedelta | None = None):
     else:
         expire = datetime.utcnow() + timedelta(minutes=30)
     to_encode.update({"exp": expire})
-    encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+    encoded_jwt = jwt.encode(
+        to_encode, settings.SECRET_KEY, algorithm=settings.ALGORITHM
+    )
     return encoded_jwt
