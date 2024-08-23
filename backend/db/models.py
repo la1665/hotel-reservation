@@ -8,10 +8,6 @@ from sqlalchemy.orm import relationship
 from backend.db.engine import Base
 
 
-def to_dict(obj: Base) -> dict[str, Any]:
-    return {c.name: getattr(obj, c.name) for c in obj.__table__.columns}
-
-
 class UserType(Enum):
     USER = "user"
     ADMIN = "admin"

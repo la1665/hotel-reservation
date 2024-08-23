@@ -5,7 +5,6 @@ from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
 from datetime import datetime, timedelta
 
-
 from settings import SECRET_KEY, ALGORITHM
 from backend.db.models import DBUser
 
