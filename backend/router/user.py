@@ -12,7 +12,7 @@ from db.engine import get_db
 from operation.user import UserOperation
 from schema.user import UserInDB, UserCreate, UserUpdate
 
-router = APIRouter()
+router = APIRouter(tags=["user"])
 
 
 @router.post("/users", response_model=UserInDB)
