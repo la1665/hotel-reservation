@@ -2,14 +2,14 @@
 # from dotenv import load_dotenv
 from typing import Union, Optional, Any
 from pydantic_settings import BaseSettings
-
+# from dataclasses import dataclass
 # load_dotenv()
 # DATABASE_URL = os.getenv("DATABASE_URL")
 # SECRET_KEY: Any = os.getenv("SECRET_KEY")
 # ACCESS_TOKEN_EXPIRE_MINUTES: Any = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES"))
 # ALGORITHM = "HS256"
 
-
+# @dataclass
 class Settings(BaseSettings):
     POSTGRES_USER: str
     POSTGRES_PASSWORD: str

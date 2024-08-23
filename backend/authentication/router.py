@@ -5,7 +5,7 @@ from datetime import timedelta
 
 from settings import settings
 from authentication import auth
-from schema.auth import Token
+from authentication.schema import Token
 from db.engine import get_db
 
 router = APIRouter()

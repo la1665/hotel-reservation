@@ -6,8 +6,8 @@ from sqlalchemy.orm import joinedload
 from datetime import datetime
 
 from exception_handeler import exceptions
-from db.models import DBUser
-from schema.user import UserBase, UserCreate, UserUpdate
+from user.models import DBUser
+from user.schema import UserBase, UserCreate, UserUpdate
 from authentication import auth
 
 
@@ -66,11 +66,9 @@ class UserOperation:
             user = await session.scalar(query)
             if user is None:
                 raise exceptions.NotFoundException("User")
+            data["updated_at"] = datetime.utcnow()
             for key, value in data.items():
                 setattr(user, key, value)
-            user.updated_at = (
-                datetime.utcnow()
-            )  # Update the timestamp for the last update
             await session.commit()
             await session.refresh(user)
 

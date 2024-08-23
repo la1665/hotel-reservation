@@ -7,7 +7,7 @@ from datetime import datetime, timedelta
 
 
 from settings import settings
-from db.models import DBUser
+from user.models import DBUser
 
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")

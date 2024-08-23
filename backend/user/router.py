@@ -9,8 +9,8 @@ from authentication.authorization import (
     is_admin_user,
 )
 from db.engine import get_db
-from operation.user import UserOperation
-from schema.user import UserInDB, UserCreate, UserUpdate
+from user.operation import UserOperation
+from user.schema import UserInDB, UserCreate, UserUpdate
 
 router = APIRouter(tags=["user"])
 

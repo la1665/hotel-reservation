@@ -6,8 +6,8 @@ from settings import settings
 from exception_handeler import exceptions
 from db.engine import get_db
 from authentication.auth import oauth2_scheme, get_user
-from schema.auth import TokenData
-from schema.user import UserInDB
+from authentication.schema import TokenData
+from user.schema import UserInDB
 
 
 async def get_current_user(
