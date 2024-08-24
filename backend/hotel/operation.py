@@ -77,7 +77,7 @@ class HotelOperation:
             if hotel is None:
                 raise exceptions.NotFoundException("Hotel")
 
-            return hotel
+        return hotel
 
     async def get_all_hotels(self):
         query = sqlalchemy.select(DBHotel)

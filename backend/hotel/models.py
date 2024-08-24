@@ -21,6 +21,7 @@ class IranCities(Enum):
     AHVAZ = "ahvaz"
     ARDABIL = "ardabil"
     BABOL = "babol"
+    BABOLSAR = "babolsar"
     BANDARE_ABBAS = "bandar-e abbas"
     ESFAHAN = "esfahan"
     GORGAN = "gorgan"
