@@ -11,13 +11,6 @@ from user.schema import UserBase, UserCreate, UserUpdate
 from authentication import auth
 
 
-async def check_user(user_id: int, db_session: AsyncSession):
-    result = await db_session.scalar(
-        sqlalchemy.select(DBUser).filter(DBUser.id == user_id)
-    )
-    return result is not None
-
-
 class UserOperation:
     def __init__(self, db_session: AsyncSession) -> None:
         self.db_session = db_session
@@ -33,12 +26,12 @@ class UserOperation:
             return user
 
     async def get_all_users(self):
-        query = sqlalchemy.select(DBUser)
 
         async with self.db_session as session:
-            users = await session.scalars(query)
+            result = await session.execute(select(DBUser))
+            users = result.scalars().all()
 
-            return [user for user in users]
+        return users
 
     async def create_user(self, user: UserCreate):
         hashed_password = auth.get_password_hash(user.password)

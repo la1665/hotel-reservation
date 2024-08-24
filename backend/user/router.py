@@ -32,7 +32,7 @@ async def api_read_all_user(
     return users
 
 
-@router.get("/users/me", response_model=UserInDB)
+@router.get("/users/me")
 async def api_users_me(
     db: AsyncSession = Depends(get_db),
     current_user: UserInDB = Depends(get_current_user),

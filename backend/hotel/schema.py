@@ -13,7 +13,7 @@ class RoomBase(BaseModel):
 
 
 class RoomCreate(RoomBase):
-    pass
+    hotel_id: int = Field(exclude=True)
 
 
 class RoomInDB(RoomBase):
