@@ -1,5 +1,4 @@
 import sqlalchemy
-from fastapi import HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from sqlalchemy.orm import joinedload, selectinload
@@ -8,7 +7,6 @@ from datetime import datetime
 from exception_handeler import exceptions
 from hotel.models import DBHotel, DBRoom
 from hotel.schema import HotelBase, HotelCreate, HotelInDB, RoomBase, RoomCreate, RoomInDB
-from authentication import auth
 
 
 async def get_hotel_by_id(db: AsyncSession, hotel_id: int | None):
@@ -37,19 +35,27 @@ class RoomOperation:
             session.add(room)
             await session.commit()
             await session.refresh(room)
-        return room
+            return room
+
+    async def get_room(self, room_id: int):
+        async with self.db_session as session:
+            room = await session.execute(select(DBRoom).where(DBRoom.id == room_id))
+            room = room.scalars().first()
+            if room is None:
+                raise exceptions.NotFoundException("Room")
+            return room
 
     async def get_all_rooms(self, hotel_id: int | None = None):
         # query = sqlalchemy.select(DBHotel)
         async with self.db_session as session:
             if hotel_id == None:
                 result = await session.execute(select(DBRoom)) # Eager load rooms)
-                rooms = result.scalars().all()
+                rooms = result.unique().scalars().all()
             else:
                 result = await session.execute(select(DBRoom).where(DBRoom.hotel_id == hotel_id)) # Eager load rooms)
-                rooms = result.scalars().all()
+                rooms = result.unique().scalars().all()
 
-        return rooms
+            return rooms
 
 
 class HotelOperation:
@@ -68,20 +74,22 @@ class HotelOperation:
             session.add(hotel)
             await session.commit()
             await session.refresh(hotel)
-        return hotel
+            return hotel
 
     async def get_hotel(self, hotel_id: int):
-        query = sqlalchemy.select(DBHotel).where(DBHotel.id == hotel_id)
+        # query = sqlalchemy.select(DBHotel).where(DBHotel.id == hotel_id)
         async with self.db_session as session:
-            hotel = await session.scalar(query)
+            result = await session.execute(select(DBHotel).where(DBHotel.id == hotel_id))
+            hotel = result.scalars().first()
             if hotel is None:
                 raise exceptions.NotFoundException("Hotel")
 
-        return hotel
+            return hotel
 
     async def get_all_hotels(self):
-        query = sqlalchemy.select(DBHotel)
+        # query = sqlalchemy.select(DBHotel)
         async with self.db_session as session:
             result = await session.execute(select(DBHotel).options(selectinload(DBHotel.rooms)))  # Eager load rooms)
-            hotels = result.scalars().all()
-        return hotels
+            # result = await session.execute(select(DBHotel).options(joinedload(DBHotel.rooms)))  # Eager load rooms)
+            hotels = result.unique().scalars().all()
+            return hotels

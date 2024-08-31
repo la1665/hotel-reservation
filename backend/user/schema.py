@@ -1,8 +1,9 @@
 from pydantic import BaseModel, Field
 from datetime import datetime
-from typing import Optional
+from typing import Optional, List
 
-from user.models import UserType
+from booking.schema import BookingInDB
+from user.models import UserType, OfferType
 
 
 class UserBase(BaseModel):
@@ -32,6 +33,8 @@ class UserInDB(UserBase):
     id: int
     created_at: datetime
     updated_at: datetime
+    offer_type: OfferType = Field(default=OfferType.ZERO)
+    bookings: List[BookingInDB] = []
 
     class Config:
         orm_mode = True

@@ -13,13 +13,16 @@ class RoomBase(BaseModel):
 
 
 class RoomCreate(RoomBase):
-    hotel_id: int = Field(exclude=True)
+    # hotel_id: int = Field(exclude=True)
+    pass
 
 
 class RoomInDB(RoomBase):
     id: int
     hotel_id: int
-    is_active: bool = Field(default=RoomType.NORMAL)
+    created_at: datetime
+    updated_at: datetime
+    is_active: bool = Field(default=True)
 
     class Config:
         orm_mode = True
@@ -40,6 +43,7 @@ class HotelCreate(HotelBase):
 class HotelInDB(HotelBase):
     id: int
     created_at: datetime
+    updated_at: datetime
     is_active: bool = Field(default=True)
     rooms: List[RoomInDB] = []
 

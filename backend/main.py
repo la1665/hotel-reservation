@@ -8,6 +8,7 @@ from db.engine import engine, Base
 from user.router import router as user_router
 from authentication.router import router as auth_router
 from hotel.router import hotel_router, room_router
+from booking.router import booking_router
 from exception_handeler.exceptions import (
     NotFoundException,
     NotAllowedException,
@@ -79,3 +80,4 @@ app.include_router(user_router)
 app.include_router(auth_router)
 app.include_router(hotel_router)
 app.include_router(room_router)
+app.include_router(booking_router)
