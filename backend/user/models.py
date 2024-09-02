@@ -38,4 +38,4 @@ class DBUser(Base):
     offer_type = Column(sqlalchemyEnum(OfferType), default=OfferType.ZERO, nullable=False)
     is_active = Column(Boolean, nullable=False, default=True)
 
-    bookings = relationship("DBBooking", back_populates="user")
+    bookings = relationship("DBBooking", back_populates="user", lazy="joined", cascade="all, delete-orphan")

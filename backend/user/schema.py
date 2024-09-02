@@ -25,8 +25,6 @@ class UserUpdate(BaseModel):
     last_name: Optional[str] = None
     user_type: UserType = Field(default=UserType.USER)
 
-    class Config:
-        orm_mode = True
 
 
 class UserInDB(UserBase):
@@ -34,7 +32,10 @@ class UserInDB(UserBase):
     created_at: datetime
     updated_at: datetime
     offer_type: OfferType = Field(default=OfferType.ZERO)
-    bookings: List[BookingInDB] = []
 
     class Config:
         orm_mode = True
+
+
+class UserOut(UserInDB):
+    bookings: List[BookingInDB] = []

@@ -10,7 +10,7 @@ from authentication.authorization import (
 )
 from db.engine import get_db
 from user.operation import UserOperation
-from user.schema import UserInDB, UserCreate, UserUpdate
+from user.schema import UserInDB, UserCreate, UserUpdate, UserOut
 
 router = APIRouter(tags=["user"])
 
@@ -23,7 +23,7 @@ async def api_create_user(user: UserCreate, db: AsyncSession = Depends(get_db)):
     return await UserOperation(db).create_user(user)
 
 
-@router.get("/users", response_model=list[UserInDB])
+@router.get("/users", response_model=list[UserOut])
 async def api_read_all_user(
     db: AsyncSession = Depends(get_db),
     current_user: UserInDB = Depends(is_admin_user),
@@ -32,7 +32,7 @@ async def api_read_all_user(
     return users
 
 
-@router.get("/users/me", response_model=UserInDB)
+@router.get("/users/me", response_model=UserOut)
 async def api_users_me(
     db: AsyncSession = Depends(get_db),
     current_user: UserInDB = Depends(get_current_user),
@@ -41,7 +41,7 @@ async def api_users_me(
     return await UserOperation(db).get_user(user_id)
 
 
-@router.get("/users/{user_id}", response_model=UserInDB)
+@router.get("/users/{user_id}", response_model=UserOut)
 async def api_read_user(
     user_id: int,
     db: AsyncSession = Depends(get_db),

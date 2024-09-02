@@ -29,9 +29,6 @@ class BookingOperation:
 
             # existing_booking = result.scalars().first()
             if existing_booking:
-                print(f" ----------------- {existing_booking.id}")
-                print(f" ----------------- {existing_booking.start_date}")
-                print(f" ----------------- {existing_booking.end_date}")
                 raise exceptions.BadRequestExceptions("Room is already booked for the selected dates.")
 
             new_booking = DBBooking(
@@ -51,7 +48,7 @@ class BookingOperation:
             booking = await session.execute(select(DBBooking).where(DBBooking.id == booking_id).options(joinedload(DBBooking.room), joinedload(DBBooking.user)))
             if booking is None:
                 raise exceptions.NotFoundException("Booking")
-            return booking.scalars().first()
+            return booking.unique().scalars().first()
 
     async def get_all_booking_by_room(self, room_id: int):
         async with self.db_session as session:
