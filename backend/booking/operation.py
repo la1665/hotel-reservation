@@ -65,7 +65,7 @@ class BookingOperation:
     async def update_booking(self, booking_id: int, data: dict):
         async with self.db_session as session:
 
-            result = await session.execute(select(DBBooking).filter(DBBooking.id == booking_id))
+            result = await session.execute(select(DBBooking).filter(DBBooking.id == booking_id).options(joinedload(DBBooking.room), joinedload(DBBooking.user)))
             booking = result.scalars().first()
 
             if not booking:
@@ -81,7 +81,7 @@ class BookingOperation:
 
     async def delete_booking(self, booking_id: int):
         async with self.db_session as session:
-            result = await session.execute(select(DBBooking).filter(DBBooking.id == booking_id))
+            result = await session.execute(select(DBBooking).filter(DBBooking.id == booking_id).options(joinedload(DBBooking.room), joinedload(DBBooking.user)))
             booking = result.scalars().first()
 
             if booking is None:
